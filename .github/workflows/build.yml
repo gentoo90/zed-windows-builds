@@ -1,8 +1,7 @@
 name: Build Zed Nightly
 
 on:
-  schedule:
-    - cron: "0 0 * * *" # Runs every night at midnight UTC
+  push:
   workflow_dispatch:
   pull_request:
 
@@ -58,20 +57,20 @@ jobs:
       - name: Setup rustflags
         run: pwsh ./Parse-Rustflags.ps1 ${{ matrix.rustflags }}
 
-      - name: Build release
-        working-directory: zed
-        run: cargo build --release
+      # - name: Build release
+      #   working-directory: zed
+      #   run: cargo build --release
 
       - name: Build remote server
         if: matrix.build_remote_server
         working-directory: zed
         run: cargo build -p remote_server --release
 
-      - name: Archive build
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: zed/target/release/zed.exe
+      # - name: Archive build
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ matrix.artifact_name }}
+      #     path: zed/target/release/zed.exe
 
       - name: Archive remote server build
         if: matrix.build_remote_server
@@ -100,11 +99,11 @@ jobs:
       - name: Create release directories and zip
         run: |
           mkdir -p zed-release zed-release-opengl zed-remote-server-release
-          mv artifacts/zed-release/zed.exe zed-release/
-          mv artifacts/zed-release-opengl/zed.exe zed-release-opengl/
+          # mv artifacts/zed-release/zed.exe zed-release/
+          # mv artifacts/zed-release-opengl/zed.exe zed-release-opengl/
           mv artifacts/zed-remote-server-release/remote_server.exe zed-remote-server-release/
-          zip -r zed-windows.zip zed-release/*
-          zip -r zed-windows-opengl.zip zed-release-opengl/*
+          # zip -r zed-windows.zip zed-release/*
+          # zip -r zed-windows-opengl.zip zed-release-opengl/*
           zip -r zed-remote-server-windows.zip zed-remote-server-release/*
 
       - name: Upload release build artifacts to GitHub Release
@@ -115,6 +114,6 @@ jobs:
           draft: false
           make_latest: true
           files: |
-            zed-windows.zip
-            zed-windows-opengl.zip
+            # zed-windows.zip
+            # zed-windows-opengl.zip
             zed-remote-server-windows.zip
